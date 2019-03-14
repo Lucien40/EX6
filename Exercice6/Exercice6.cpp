@@ -16,7 +16,7 @@ vector<T> solve(vector<T> const& diag, vector<T> const& lower,
   vector<T> new_diag(diag);
   vector<T> new_rhs(rhs);
 
-  for (int i(1); i < diag.size(); ++i) {
+  for (size_t i(1); i < diag.size(); ++i) {
     double pivot = lower[i - 1] / new_diag[i - 1];
     new_diag[i] -= pivot * upper[i - 1];
     new_rhs[i] -= pivot * new_rhs[i - 1];
@@ -59,10 +59,14 @@ class Rho_lib {
       : b(b_), a0(a0_), trivial(trivial_){};
 
   inline double operator()(double const& r) {
-    if (trivial or r > b)
+    if (trivial) {
       return 1.0;
-    else
-      return a0 * (1.0 - pow(r / b, 2));
+    } else {
+      if (r > b)
+        return 0.0;
+      else
+        return a0 * (1.0 - pow(r / b, 2));
+    }
   }
 
  private:
@@ -118,13 +122,13 @@ int main(int argc, char* argv[]) {
 
   // TODO: Assemblage des elements de la matrice et du membre de droite
 
-  for (size_t k = 1; k < ninters; k++) {
+  for (int k = 0; k < ninters; k++) {
     double integral;
     if (k < N1) {
       integral = (epsilonr(r[k], 1) * r[k] + epsilonr(r[k + 1], 1) * r[k + 1]) /
                  (2 * h[k]);
     } else {
-      integral = (epsilonr(r[k], 1) * r[k] + epsilonr(r[k + 1], 1) * r[k + 1]) /
+      integral = (epsilonr(r[k], 0) * r[k] + epsilonr(r[k + 1], 0) * r[k + 1]) /
                  (2 * h[k]);
     }
     diag[k] += integral;

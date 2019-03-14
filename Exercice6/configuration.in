@@ -1,5 +1,5 @@
 % Parametres physiques :
-trivial = true
+trivial = false
 b  = 0.06
 R  = 0.12
 a0 = 1e4
