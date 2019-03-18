@@ -6,6 +6,6 @@ a0 = 1e4
 V0 = 0
 
 % Parametres numeriques :
-N1 = 20
-N2 = 20
+N1 = 200
+N2 = 200
 output = output

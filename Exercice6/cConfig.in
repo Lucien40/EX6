@@ -1,0 +1,11 @@
+% Parametres physiques :
+trivial = true
+b  = 0.06
+R  = 0.12
+a0 = 1e4
+V0 = 0
+
+% Parametres numeriques :
+N1 = 20
+N2 = 20
+output = output
