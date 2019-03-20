@@ -1,6 +1,6 @@
 % Parametres physiques :
 trivial = false
-b  = 0.06
+b  = 0.02
 R  = 0.12
 a0 = 1e4
 V0 = 0

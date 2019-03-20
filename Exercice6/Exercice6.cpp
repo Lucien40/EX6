@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
     rmid[i] = 0.5 * r[i] + 0.5 * r[i + 1];
     // TODO: Calculer E_r et D_r/epsilon_0 au milieu des intervalles
     Er[i] = (phi[i + 1] - phi[i]) / h[i];
-    Dr[i] = epsilonr(rmid[i], 1) * Er[i];
+    Dr[i] = epsilonr(rmid[i], 0) * Er[i];
   }
   ofs.open((output + "_Er_Dr.out").c_str());
   ofs.precision(15);
