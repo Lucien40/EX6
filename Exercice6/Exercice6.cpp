@@ -136,8 +136,8 @@ int main(int argc, char* argv[]) {
     lower[k] -= integral;
     upper[k] -= integral;
 
-    rhs[k] -= rho_lib(r[k]) * r[k] * (r[k] - r[k + 1]);
-    if (k > 0) rhs[k] += rho_lib(r[k]) * r[k] * (r[k] - r[k - 1]);
+    rhs[k] -= rho_lib(r[k]) * r[k] * (r[k] - r[k + 1]) * 0.5;
+    if (k > 0) rhs[k] += rho_lib(r[k]) * r[k] * (r[k] - r[k - 1]) * 0.5;
   }
 
   // TODO: Condition au bord:
@@ -163,7 +163,8 @@ int main(int argc, char* argv[]) {
   for (int i(0); i < ninters; ++i) {
     rmid[i] = 0.5 * r[i] + 0.5 * r[i + 1];
     // TODO: Calculer E_r et D_r/epsilon_0 au milieu des intervalles
-    Er[i] = (phi[i + 1] - phi[i]) / h[i];
+    Er[i] = (phi[i] - phi[i + 1]) / h[i];
+
     Dr[i] = epsilonr(rmid[i], 0) * Er[i];
   }
   ofs.open((output + "_Er_Dr.out").c_str());
@@ -180,8 +181,12 @@ int main(int argc, char* argv[]) {
     rmidmid[i] = 0.5 * rmid[i] + 0.5 * rmid[i + 1];
     // TODO: Calculer div(E_r) et div(D_r)/epsilon_0 au milieu des milieu des
     // intervalles
-    div_Er[i] = (Er[i + 1] - Er[i]) / (rmid[i + 1] - rmid[i]);
-    div_Dr[i] = (Dr[i + 1] - Dr[i]) / (rmid[i + 1] - rmid[i]);
+    div_Er[i] = (Er[i + 1] + Er[i]) / (2 * rmidmid[i]) +
+                (Er[i + 1] - Er[i]) / (rmid[i + 1] - rmid[i]);
+    div_Dr[i] = (Dr[i + 1] + Dr[i]) / (2 * rmidmid[i]) +
+                (Dr[i + 1] - Dr[i]) / (rmid[i + 1] - rmid[i]);
+    //(Dr[i + 1] * r[i + 1] - Dr[i] * r[i]) /
+    // (rmidmid[i] * (rmid[i + 1] - rmid[i]));
   }
   ofs.open((output + "_rholib_divEr_divDr.out").c_str());
   ofs.precision(15);
