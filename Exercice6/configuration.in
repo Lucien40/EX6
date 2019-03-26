@@ -4,7 +4,7 @@ b  = 0.06
 R  = 0.12
 a0 = 1e4
 V0 = 0
-
+p=0.5
 % Parametres numeriques :
 N1 = 200
 N2 = 200

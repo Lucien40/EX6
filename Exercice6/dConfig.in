@@ -4,7 +4,7 @@ b  = 0.02
 R  = 0.12
 a0 = 1e4
 V0 = 0
-
+p=1
 % Parametres numeriques :
 N1 = 20
 N2 = 20

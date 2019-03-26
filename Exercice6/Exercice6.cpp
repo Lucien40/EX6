@@ -97,6 +97,9 @@ int main(int argc, char* argv[]) {
   // Conditions aux bords :
   const double V0(configFile.get<double>("V0"));
 
+  // Mixte:
+  const double p(configFile.get<double>("p"));
+
   // Instanciation des objets :
   Epsilonr epsilonr(configFile.get<bool>("trivial"), b, R);
   Rho_lib rho_lib(configFile.get<bool>("trivial"), b,
@@ -125,19 +128,30 @@ int main(int argc, char* argv[]) {
   for (int k = 0; k < ninters; k++) {
     double integral;
     if (k < N1) {
-      integral = (epsilonr(r[k], 1) * r[k] + epsilonr(r[k + 1], 1) * r[k + 1]) /
-                 (2 * h[k]);
+      integral =
+          (p * (epsilonr(r[k], 1) * r[k] + epsilonr(r[k + 1], 1) * r[k + 1]) +
+           (1 - p) * (epsilonr((r[k] + r[k + 1]) / 2, 1) * (r[k] + r[k + 1]))) /
+          (2 * h[k]);
     } else {
-      integral = (epsilonr(r[k], 0) * r[k] + epsilonr(r[k + 1], 0) * r[k + 1]) /
-                 (2 * h[k]);
+      integral =
+          (p * (epsilonr(r[k], 0) * r[k] + epsilonr(r[k + 1], 0) * r[k + 1]) +
+           (1 - p) * (epsilonr((r[k] + r[k + 1]) / 2, 0) * (r[k] + r[k + 1]))) /
+          (2 * h[k]);
     }
     diag[k] += integral;
     diag[k + 1] += integral;
     lower[k] -= integral;
     upper[k] -= integral;
 
-    rhs[k] -= rho_lib(r[k]) * r[k] * (r[k] - r[k + 1]) * 0.5;
-    if (k > 0) rhs[k] += rho_lib(r[k]) * r[k] * (r[k] - r[k - 1]) * 0.5;
+    rhs[k] +=
+        (p * rho_lib(r[k]) * 0.5 * r[k] +
+         (1 - p) * rho_lib((r[k] + r[k + 1]) / 2) * (r[k] + r[k + 1]) / 4) *
+        (r[k + 1] - r[k]);
+    if (k > 0)
+      rhs[k] +=
+          (p * rho_lib(r[k]) * 0.5 * r[k] +
+           (1 - p) * rho_lib((r[k] + r[k - 1]) / 2) * (r[k] + r[k - 1]) / 4) *
+          (r[k] - r[k - 1]);
   }
 
   // TODO: Condition au bord:
